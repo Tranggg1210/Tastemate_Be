@@ -7,9 +7,11 @@ const cors = require('cors');
 const http = require('http');
 const userRoute = require('./routes/user.route');
 const authRoute = require('./routes/auth.route');
+const suppliersRoute = require('./routes/suppliers.route');
+const categoriesRoute = require('./routes/categories.route');
 
-const upload = require('./middlewares/multer.middleware');
 const errorHandler = require('./middlewares/error.middleware');
+const upload = require('./middlewares/multer.middleware');
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +27,8 @@ app.use('/uploads', express.static('uploads'));
 app.use(morgan('dev'));
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/suppliers', suppliersRoute);
+app.use('/api/v1/categories', categoriesRoute);
 
 app.post('/uploads', upload.single('file'), (req, res) => {
   const urlPublic = `http://localhost:${port}/uploads/${req.file.filename}`;
@@ -38,6 +42,20 @@ app.all('*', (req, res) => {
   res.status(httpStatus.NOT_FOUND).send({
     message: 'Not found',
     code: httpStatus.NOT_FOUND,
+  });
+});
+
+app.get('/', (req, res) => {
+  res.status(httpStatus.OK).send({
+    message: 'Server is running 🍀',
+    code: httpStatus.OK,
+  });
+});
+
+app.get('/health-check', (req, res) => {
+  res.status(httpStatus.OK).send({
+    message: 'OK',
+    code: httpStatus.OK,
   });
 });
 

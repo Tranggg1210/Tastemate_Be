@@ -7,7 +7,7 @@ const { cloudinary } = require('../configs/cloudinary.config');
 const createUser = catchAsync(async (req, res) => {
   const existingEmail = await User.findOne({ email: req.body.email });
   if (existingEmail) {
-    throw new ApiError(httpStatus.CONFLICT, 'Emaild đã tồn tại');
+    throw new ApiError(httpStatus.CONFLICT, 'Email đã tồn tại');
   }
 
   const user = await User.create(req.body);
