@@ -8,25 +8,33 @@ const ingredientsSchema = new Schema(
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
-    },
-    stockQuantity: {
-      type: Number,
-      required: true,
-    },
     unit: {
       type: String,
       require: true,
     },
     nutritionalValue: {
-      type: String,
-      require: true
+      type: Number,
+      require: true,
     },
     description: {
       type: String,
-      require: true
+      require: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    supplier: {
+      type: Schema.Types.ObjectId,
+      ref: 'Suppliers',
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: 'Categories',
     }
   },
   { timestamps: true },
