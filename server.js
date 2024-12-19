@@ -34,6 +34,20 @@ app.post('/uploads', upload.single('file'), (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.status(httpStatus.OK).send({
+    message: 'Server is running 🍀',
+    code: httpStatus.OK,
+  });
+});
+
+app.get('/health-check', (req, res) => {
+  res.status(httpStatus.OK).send({
+    message: 'OK',
+    code: httpStatus.OK,
+  });
+});
+
 app.all('*', (req, res) => {
   res.status(httpStatus.NOT_FOUND).send({
     message: 'Not found',
