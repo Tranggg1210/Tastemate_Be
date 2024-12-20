@@ -1,11 +1,11 @@
 const joi = require('joi');
-const { objectId, phoneNumberValidate } = require('./custorm.validation');
+const { objectId } = require('./custom.validation');
 
 const createCategory = {
   body: joi.object().keys({
     name: joi.string().min(2).max(255).required().messages({
       'any.required': 'Vui lòng điền tên danh mục',
-    })
+    }),
   }),
 };
 
@@ -27,16 +27,19 @@ const updateCategoryById = {
   params: joi.object({
     categoryId: joi.string().required().custom(objectId),
   }),
-  body: joi.object().keys({
-    name: joi.string().min(2).max(255).optional().messages({
-      'any.required': 'Vui lòng điền tên danh mục',
+  body: joi
+    .object()
+    .keys({
+      name: joi.string().min(2).max(255).optional().messages({
+        'any.required': 'Vui lòng điền tên danh mục',
+      }),
+      image: joi.string().email().optional(),
+    })
+    .or('name', 'image')
+    .messages({
+      'object.missing': 'Ít nhất một trong các trường name hoặc image là bắt buộc',
     }),
-    image: joi.string().email().optional(),
-  }).or('name', 'image').messages({
-    'object.missing': 'Ít nhất một trong các trường name hoặc image là bắt buộc',
-  })
 };
-
 
 const deleteCategoryById = {
   params: joi.object({
@@ -44,11 +47,10 @@ const deleteCategoryById = {
   }),
 };
 
-
 module.exports = {
   createCategory,
   getCategories,
   getCategoryById,
   updateCategoryById,
-  deleteCategoryById
+  deleteCategoryById,
 };
