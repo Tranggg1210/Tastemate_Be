@@ -59,20 +59,6 @@ app.all('*', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
-  res.status(httpStatus.OK).send({
-    message: 'Server is running 🍀',
-    code: httpStatus.OK,
-  });
-});
-
-app.get('/health-check', (req, res) => {
-  res.status(httpStatus.OK).send({
-    message: 'OK',
-    code: httpStatus.OK,
-  });
-});
-
 app.use(errorHandler);
 
 mongoose
