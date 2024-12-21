@@ -1,5 +1,7 @@
 const httpStatus = require('http-status');
+
 const User = require('../models/user.model');
+const Cart = require('../models/cart.model');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { cloudinary } = require('../configs/cloudinary.config');
@@ -22,7 +24,7 @@ const createUser = catchAsync(async (req, res) => {
     }
   }
 
-  await user.save();
+  await Promise.all([user.save(), Cart.create({ user: user._id })]);
 
   user.password = undefined;
 
@@ -88,7 +90,7 @@ const updateUserById = catchAsync(async (req, res) => {
   Object.assign(user, req.body);
 
   const file = req.file;
-  if(file){
+  if (file) {
     const avatar = await cloudinary.uploader.upload(file.path);
     user.avatar = avatar.url;
   }
