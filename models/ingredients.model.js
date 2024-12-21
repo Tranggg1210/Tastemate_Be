@@ -18,7 +18,7 @@ const ingredientsSchema = new Schema(
     },
     description: {
       type: String,
-      require: true,
+      require: false,
     },
     price: {
       type: Number,
@@ -35,7 +35,7 @@ const ingredientsSchema = new Schema(
     category: {
       type: Schema.Types.ObjectId,
       ref: 'Categories',
-    }
+    },
   },
   { timestamps: true },
 );
