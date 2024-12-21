@@ -64,6 +64,16 @@ const login = catchAsync(async (req, res) => {
   });
 });
 
+const getMe = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).json({
+    code: httpStatus.OK,
+    message: 'Lấy thông tin người dùng thành công',
+    data: {
+      user: req.user,
+    },
+  });
+});
+
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.body;
 
@@ -98,7 +108,7 @@ const sendOtp = catchAsync(async (req, res) => {
   }
 
   const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
-  const otpExpiration = 3 * 60 * 1000; 
+  const otpExpiration = 3 * 60 * 1000;
 
   setOtp(email, otp, otpExpiration);
 
@@ -200,6 +210,7 @@ const changeUserProfile = catchAsync(async (req, res) => {
 module.exports = {
   register,
   login,
+  getMe,
   refreshToken,
   changePassword,
   changeUserProfile,
