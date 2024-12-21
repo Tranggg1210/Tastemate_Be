@@ -3,11 +3,13 @@ require('dotenv').config();
 const cors = require('cors');
 const http = require('http');
 const morgan = require('morgan');
+const cron = require('node-cron');
 const express = require('express');
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 
 const apiRoute = require('./routes');
+const cronService = require('./utils/cron-job');
 const upload = require('./middlewares/multer.middleware');
 const errorHandler = require('./middlewares/error.middleware');
 
@@ -61,10 +63,17 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
+const scheduledTasks = [{ task: cronService.updateStatusOrder, schedule: '*/55 * * * * *' }];
+
 mongoose
   .connect(mongoURI)
   .then(() => {
     console.log('MongoDB connected 🍀');
+  })
+  .then(() => {
+    scheduledTasks.forEach(({ task, schedule }) => {
+      cron.schedule(schedule, task, { scheduled: true, timezone: 'Asia/Ho_Chi_Minh' });
+    });
   })
   .then(() => {
     server.listen(port, () => {

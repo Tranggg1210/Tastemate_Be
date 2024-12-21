@@ -4,6 +4,20 @@ const { ORDER_STATUS_ENUM } = require('../constants');
 
 const Schema = mongoose.Schema;
 
+const historySchema = new Schema(
+  {
+    action: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
 const orderDetailSchema = new Schema(
   {
     ingredient: {
@@ -46,6 +60,7 @@ const orderSchema = new Schema(
     status: {
       type: String,
       enum: ORDER_STATUS_ENUM,
+      index: true,
       default: ORDER_STATUS_ENUM.PENDING,
     },
     recipientName: {
@@ -63,6 +78,11 @@ const orderSchema = new Schema(
     note: {
       type: String,
       required: false,
+    },
+    histories: {
+      type: [historySchema],
+      required: false,
+      default: [],
     },
   },
   { timestamps: true },

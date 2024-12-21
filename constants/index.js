@@ -14,8 +14,17 @@ const ORDER_STATUS_ENUM = {
   CANCELLED: 'cancelled',
 };
 
+const ORDER_ACTION_ENUM = {
+  CREATED: 'created',
+  CONFIRMED: 'confirmed',
+  DELIVERING: 'delivering',
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled',
+};
+
 module.exports = {
   USER_ROLE_ENUM,
   SALT_WORK_FACTOR,
   ORDER_STATUS_ENUM,
+  ORDER_ACTION_ENUM,
 };
