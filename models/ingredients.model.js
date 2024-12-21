@@ -8,10 +8,6 @@ const ingredientsSchema = new Schema(
       type: String,
       required: true,
     },
-    unit: {
-      type: String,
-      require: true,
-    },
     nutritionalValue: {
       type: Number,
       require: true,
@@ -20,11 +16,20 @@ const ingredientsSchema = new Schema(
       type: String,
       require: true,
     },
+    image: {
+      type: String,
+      default: 'https://images.unsplash.com/photo-1534944645004-bf75556ce377?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+
+    },
+    unit: {
+      type: String,
+      require: true,
+    },
     price: {
       type: Number,
       required: true,
     },
-    quantity: {
+    stockQuantity: {
       type: Number,
       required: true,
     },
