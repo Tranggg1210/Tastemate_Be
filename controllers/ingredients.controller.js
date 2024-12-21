@@ -1,5 +1,6 @@
 const httpStatus = require('http-status');
 const Ingredients = require('../models/ingredients.model');
+const DishesRecipes = require('../models/dishes-recipes.model');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { cloudinary } = require('../configs/cloudinary.config');
@@ -144,6 +145,8 @@ const deleteIngredientById = catchAsync(async (req, res) => {
   if (!ingredient) {
     throw new ApiError(httpStatus.NOT_FOUND, `Không tìm thấy nguyên liệu`);
   }
+
+  await DishesRecipes.deleteMany({ ingredients: req.params.ingredientId });
 
   res.status(httpStatus.OK).json({
     message: `Xoá nguyên liệu thành công`,
