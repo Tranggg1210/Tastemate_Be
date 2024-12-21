@@ -2,11 +2,11 @@ const httpStatus = require('http-status');
 const { intersection, map } = require('lodash');
 
 const Cart = require('../models/cart.model');
-const Order = require('../models/order.model');
 const ApiError = require('../utils/ApiError');
+const Order = require('../models/order.model');
 const catchAsync = require('../utils/catchAsync');
-const { ORDER_STATUS_ENUM } = require('../constants');
 const Ingredient = require('../models/ingredients.model');
+const { ORDER_STATUS_ENUM, ORDER_ACTION_ENUM } = require('../constants');
 
 const create = catchAsync(async (req, res) => {
   const userId = req.user._id;
@@ -46,6 +46,12 @@ const create = catchAsync(async (req, res) => {
       ingredient: item.ingredient._id,
       totalPrice: item.ingredient.price * item.quantity,
     })),
+    histories: [
+      {
+        action: ORDER_ACTION_ENUM.CREATED,
+        description: 'Bạn đã đặt đơn hàng',
+      },
+    ],
   });
 
   await Cart.updateOne(
@@ -58,7 +64,7 @@ const create = catchAsync(async (req, res) => {
   const IncIngredients = orderDetails?.map((item) => ({
     updateOne: {
       filter: { _id: item.ingredient._id },
-      update: { $inc: { quantity: -item.quantity } },
+      update: { $inc: { stockQuantity: -item.quantity } },
     },
   }));
 
@@ -71,4 +77,80 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
-module.exports = { create };
+const getMyOrders = catchAsync(async (req, res) => {
+  const { limit = 10, page = 1, sortBy = 'createdAt:desc', status = '' } = req.query;
+
+  const skip = (+page - 1) * +limit;
+  const filters = { user: req.user._id };
+  const [field, value] = sortBy.split(':');
+  const sort = { [field]: value === 'asc' ? 1 : -1 };
+
+  if (status) {
+    filters.status = status;
+  }
+
+  const [orders, totalResults] = await Promise.all([
+    Order.find(filters)
+      .populate({
+        path: 'orderDetails.ingredient',
+        model: 'Ingredients',
+      })
+      .sort(sort)
+      .skip(skip)
+      .limit(+limit),
+    Order.countDocuments(filters),
+  ]);
+
+  res.status(httpStatus.OK).json({
+    code: httpStatus.OK,
+    message: 'Lấy danh sách đơn hàng thành công',
+    data: {
+      orders,
+      limit: +limit,
+      currentPage: +page,
+      totalPage: Math.ceil(totalResults / +limit),
+      totalResults,
+    },
+  });
+});
+
+const cancelOrder = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const { orderId } = req.params;
+  const reason = req.body?.reason;
+
+  const order = await Order.findOneAndUpdate(
+    { _id: orderId, user: userId, status: ORDER_STATUS_ENUM.PENDING },
+    {
+      status: ORDER_STATUS_ENUM.CANCELLED,
+      $push: {
+        histories: {
+          action: ORDER_ACTION_ENUM.CANCELLED,
+          description: 'Bạn đã hủy đơn hàng' + (reason ? ` vì lý do: ${reason}` : ''),
+        },
+      },
+    },
+    { new: true },
+  );
+
+  if (!order) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy đơn hàng');
+  }
+
+  const IncIngredients = order.orderDetails?.map((item) => ({
+    updateOne: {
+      filter: { _id: item.ingredient._id },
+      update: { $inc: { stockQuantity: item.quantity } },
+    },
+  }));
+
+  await Ingredient.bulkWrite(IncIngredients);
+
+  res.status(httpStatus.OK).json({
+    code: httpStatus.OK,
+    message: 'Hủy đơn hàng thành công',
+    data: {},
+  });
+});
+
+module.exports = { create, getMyOrders, cancelOrder };

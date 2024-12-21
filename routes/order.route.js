@@ -9,4 +9,8 @@ const orderRoute = express.Router();
 
 orderRoute.post('/', auth, validate(orderValidation.create), orderController.create);
 
+orderRoute.get('/me', auth, validate(orderValidation.getMyOrders), orderController.getMyOrders);
+
+orderRoute.put('/:orderId/cancel', auth, validate(orderValidation.cancelOrder), orderController.cancelOrder);
+
 module.exports = orderRoute;
