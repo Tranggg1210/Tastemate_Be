@@ -12,6 +12,14 @@ const listRoutesApi = [
     route: require('./auth.route'),
   },
   {
+    path: '/carts',
+    route: require('./cart.route'),
+  },
+  {
+    path: '/orders',
+    route: require('./order.route'),
+  },
+  {
     path: '/addresses',
     route: require('./address.route'),
   },

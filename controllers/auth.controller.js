@@ -8,13 +8,15 @@ const mailer = require('../utils/mailer');
 const { setOtp, getOtp, deleteOtp } = require('../utils/memory-otp');
 const otpGenerator = require('otp-generator');
 const { generateAccessToken, generateRefreshToken } = require('../utils/generateTokens');
+const initData = require('../utils/init-data');
+const Cart = require('../models/cart.model');
 
 const register = catchAsync(async (req, res, next) => {
   const existingEmail = await User.findOne({ email: req.body.email });
   if (existingEmail) {
     throw new ApiError(httpStatus.CONFLICT, 'Địa chỉ email đã tồn tại');
   }
-  await User.create(req.body);
+  const user = await User.create(req.body);
 
   const to = req.body.email;
   const subject = 'Đăng ký tài khoản thành công';
@@ -26,6 +28,8 @@ const register = catchAsync(async (req, res, next) => {
       </div>
     </div>
   `;
+
+  await Cart.create({ user: user._id });
   await mailer.sendMail(to, subject, htmlContent);
 
   res.status(httpStatus.CREATED).json({
@@ -211,10 +215,19 @@ const changeUserProfile = catchAsync(async (req, res) => {
   });
 });
 
+const initDatabase = catchAsync(async (req, res) => {
+  await initData();
+  res.status(httpStatus.OK).json({
+    message: 'Khởi tạo dữ liệu thành công',
+    code: httpStatus.OK,
+  });
+});
+
 module.exports = {
   register,
   login,
   getMe,
+  initDatabase,
   refreshToken,
   changePassword,
   changeUserProfile,
