@@ -33,7 +33,7 @@ const updateCategoryById = {
       name: joi.string().min(2).max(255).optional().messages({
         'any.required': 'Vui lòng điền tên danh mục',
       }),
-      image: joi.string().email().optional(),
+      image: joi.string().optional(),
     })
     .or('name', 'image')
     .messages({

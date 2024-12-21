@@ -31,6 +31,10 @@ const listRoutesApi = [
     path: '/suppliers',
     route: require('./supplier.route'),
   },
+  {
+    path: '/ingredients',
+    route: require('./ingredients.route'),
+  },
   // @Todo add new route here
 ];
 
