@@ -22,6 +22,26 @@ const create = {
   }),
 };
 
+const getMyOrders = {
+  query: joi.object({
+    sortBy: joi.string(),
+    limit: joi.number().integer(),
+    page: joi.number().integer(),
+    status: joi.string().valid('pending', 'confirmed', 'delivering', 'completed', 'cancelled'),
+  }),
+};
+
+const cancelOrder = {
+  params: joi.object().keys({
+    orderId: joi.string().custom(objectId),
+  }),
+  body: joi.object().keys({
+    reason: joi.string().min(2).max(255).optional(),
+  }),
+};
+
 module.exports = {
   create,
+  getMyOrders,
+  cancelOrder,
 };

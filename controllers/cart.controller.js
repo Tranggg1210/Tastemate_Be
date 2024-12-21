@@ -44,7 +44,7 @@ const addIngredient = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy nguyên liệu');
   }
 
-  if (quantity > ingredient.quantity) {
+  if (quantity > ingredient.stockQuantity) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Số lượng nguyên liệu quá hiện có');
   }
 
