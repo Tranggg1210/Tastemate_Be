@@ -147,11 +147,7 @@ const verifyOtp = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-  const { email, password, confirmPassword } = req.body;
-
-  if (password !== confirmPassword) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Mật khẩu và xác nhận mật khẩu không khớp');
-  }
+  const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 

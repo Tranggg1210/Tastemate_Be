@@ -97,14 +97,9 @@ const resetPassword = {
     password: joi.string().min(6).required().messages({
       'string.min': 'Mật khẩu phải có ít nhất 6 ký tự',
       'string.empty': 'Mật khẩu không được để trống',
-      'any.required': 'Mật khẩu là bắt buộc',
-    }),
-    confirmPassword: joi.string().valid(joi.ref('password')).required().messages({
-      'any.only': 'Mật khẩu xác nhận không khớp',
-      'string.empty': 'Xác nhận mật khẩu không được để trống',
-      'any.required': 'Xác nhận mật khẩu là bắt buộc',
-    }),
-  }),
+      'any.required': 'Mật khẩu là bắt buộc'
+    })
+  })
 };
 
 module.exports = {
